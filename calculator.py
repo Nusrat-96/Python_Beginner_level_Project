@@ -1,15 +1,17 @@
 import tkinter
-
+"""------------------Create a grid of buttons for a calculator-------------------"""
+# 
 button_values = [
-    ["AC", "+/-", "%", "÷"],
+    ["AC",  "+/-", "%", "÷"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
     ["1", "2", "3", "+"],
     ["0", ".", "√", "="],
+    ["", "", "", "DEL",]
 ]
 
 right_symbols = {"÷", "x", "-", "+", "="}
-top_symbols = {"AC", "+/-", "%", "√"}
+top_symbols = {"AC","DEL", "+/-", "%", "√"}
 
 
 color_gray = "#D4D4D2"
@@ -31,7 +33,8 @@ frame = tkinter.Frame(window)
 label = tkinter.Label(frame, text="0", anchor="e", 
                       bg=color_black, fg=color_white, 
                       padx=10, font=("Arial", 40),
-                      width=col_count)  # if not add width it will take the full width of the window
+                      width=col_count)                              
+                    # if not add width, it will take the full width of the label window
 
 label.grid(row = 0, column = 0, columnspan=col_count, sticky="we")
 
@@ -40,9 +43,11 @@ for row in range(row_count):
     for col in range(col_count):
         value = button_values[row][col]
         
+        # lambda value=value:... -> to create a new scope for each button
         button = tkinter.Button(frame, text=value, font=("Arial", 24),
                                 width= col_count - 1, height= 1,
                                 command= lambda value=value:button_clicked(value))  
+        
         # To add colors in the buttons
         if value in top_symbols:
             button.config(foreground=color_black, background=color_gray,
@@ -61,34 +66,40 @@ for row in range(row_count):
 frame.pack()
 
 
-# operation to perform in the calculator when a button is clicked
+"""-----------operation to perform in the calculator when a button is clicked-------------------------"""
 A = "0"
 operator = None
 B = None
 
-#after complete work to clear valus
-
+#clear all values
 def clear_all():
     global A, operator, B
     A = "0"
     operator = None
     B = None
-    
+
 def button_clicked(value):
     
+    # {"AC", "DEL", "+/-", "%", "√"}
     if value in top_symbols:
-        # {"AC", "+/-", "%", "√"}
-        
+
         if value == "AC":
             clear_all()
             label["text"] = "0"
+            
+        elif value == "DEL":
+            current_value = label["text"]
+            if len(current_value) > 1:
+                label["text"] = current_value[:-1]           # remove the last character
+            else:
+                label["text"] = "0"                          # if only one character left, reset to 0
         
         elif value == "+/-":
             try:
                 current_value = float(label["text"])
                 current_value = -current_value
-                if current_value.is_integer():  # check if the float is an integer value
-                    current_value = int(current_value)  # convert to int to avoid displaying .0
+                if current_value.is_integer():              # check if the float is an integer value
+                    current_value = int(current_value)      # convert to int to avoid displaying .0
                 label["text"] = str(current_value)
                 
             except ValueError:
@@ -107,10 +118,10 @@ def button_clicked(value):
             try:
                 current_value = float(label["text"])
                 if current_value < 0:
-                    label["text"] = "Error"  # Square root of negative number is not defined in real numbers
+                    label["text"] = "Error"                    # Square root of negative number is not defined in real numbers
                 else:
                     sqrt_value = current_value ** 0.5
-                    label["text"] = f"{sqrt_value:.5f}"   # display up to 5 decimal places
+                    label["text"] = f"{sqrt_value:.5f}"        # display up to 5 decimal places
                     
                     """
                     Another way
@@ -194,6 +205,7 @@ def button_clicked(value):
             else:
                 label["text"] += value
 
+"""=====================END Button Operation ==============================================="""
 
 # center the window on the screen
 # generally window open in the top left corner of the screen, to center it we use the following code
